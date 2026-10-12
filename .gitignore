@@ -1,0 +1,29 @@
+# Environment and credentials
+.env
+.env.local
+.env.*.local
+application-local.properties
+application-secret.properties
+*.pem
+*.key
+
+# Java and Maven
+backend/target/
+backend/.mvn/
+backend/*.iml
+backend/.idea/
+
+# Node and Vite
+node_modules/
+dist/
+dist-ssr/
+*.local
+frontend/node_modules/
+frontend/dist/
+
+# OS and Editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
