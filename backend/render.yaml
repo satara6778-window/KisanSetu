@@ -18,7 +18,7 @@ services:
         generateValue: true
 
       - key: CORS_ALLOWED_ORIGINS
-        value: http://localhost:5173,https://*.vercel.app
+        value: http://localhost:5173,https://*.vercel.app,https://kisan-setu-bbdw7gv4l-pranav-eea6.vercel.app
 
       # Optional variables for MySQL (uncomment when switching to a hosted MySQL DB):
       # - key: DB_HOST

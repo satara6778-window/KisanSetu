@@ -23,6 +23,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 @ActiveProfiles("h2")
 public class KisanSetuApplicationTests {
 
@@ -380,5 +381,22 @@ public class KisanSetuApplicationTests {
         boolean found = marketListings.stream().anyMatch(l -> l.id().equals(created.id()));
         assertTrue(found,
             "The just-published crop must be visible in the public marketplace listing immediately");
+    }
+
+    @Autowired
+    private org.springframework.test.web.servlet.MockMvc mockMvc;
+
+    @Test
+    @DisplayName("CORS preflight from production Vercel frontend is allowed with correct headers")
+    void testCorsPreflightFromProductionVercel() throws Exception {
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options("/api/products")
+                .header("Origin", "https://kisan-setu-bbdw7gv4l-pranav-eea6.vercel.app")
+                .header("Access-Control-Request-Method", "POST")
+                .header("Access-Control-Request-Headers", "content-type,authorization"))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isOk())
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header().string(
+                "Access-Control-Allow-Origin", "https://kisan-setu-bbdw7gv4l-pranav-eea6.vercel.app"))
+            .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header().string(
+                "Access-Control-Allow-Credentials", "true"));
     }
 }
