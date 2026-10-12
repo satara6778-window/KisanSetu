@@ -1,4 +1,3 @@
-
 # Build the Spring Boot application
 FROM maven:3.9-eclipse-temurin-17 AS build
 
@@ -14,7 +13,14 @@ FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar app.jar
+# Run as non-root user where practical and ensure H2 data directory exists
+RUN groupadd -r spring && useradd -r -g spring spring \
+    && mkdir -p /app/data \
+    && chown -R spring:spring /app
+
+COPY --from=build --chown=spring:spring /app/target/kisansetu-backend-*.jar app.jar
+
+USER spring:spring
 
 EXPOSE 8080
 
