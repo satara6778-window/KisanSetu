@@ -12,6 +12,8 @@ backend/target/
 backend/.mvn/
 backend/*.iml
 backend/.idea/
+backend/data/
+backend/startup-error.log
 
 # Node and Vite
 node_modules/

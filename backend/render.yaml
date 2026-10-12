@@ -1,0 +1,49 @@
+# Render.com deployment configuration for KisanSetu Backend
+# Docs: https://render.com/docs/render-yaml
+
+services:
+  - type: web
+    name: kisansetu-backend
+    runtime: java
+    plan: free                     # free tier — 512 MB RAM, spins down after 15 min idle
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -Dserver.port=$PORT -jar target/kisansetu-backend-1.0.0.jar
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+    envVars:
+      # Spring profile: must be 'mysql' to use the Render MySQL database
+      - key: SPRING_PROFILES_ACTIVE
+        value: mysql
+
+      # ── Database ─────────────────────────────────────────────────────────
+      # These are filled automatically if you link a Render MySQL database,
+      # OR you can manually set them in Render Dashboard → Environment
+      - key: DB_HOST
+        value: YOUR_RENDER_MYSQL_HOST        # e.g. oregon-mysql.render.com
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_NAME
+        value: kisansetu
+      - key: DB_USERNAME
+        value: YOUR_DB_USERNAME
+      - key: DB_PASSWORD
+        sync: false                          # set securely in Render Dashboard
+
+      # ── Security ─────────────────────────────────────────────────────────
+      - key: JWT_SECRET
+        sync: false                          # set securely in Render Dashboard
+                                             # Must be 64+ hex chars. Generate:
+                                             # openssl rand -hex 32
+
+      # ── CORS — add your Vercel URL here after deploying frontend ─────────
+      - key: CORS_ALLOWED_ORIGINS
+        value: http://localhost:5173,http://localhost:3000,https://YOUR_APP.vercel.app
+
+      # ── Platform ─────────────────────────────────────────────────────────
+      - key: PLATFORM_FEE_PERCENTAGE
+        value: "0.0"
+
+      # ── AI (Optional) ────────────────────────────────────────────────────
+      - key: GEMINI_API_KEY
+        sync: false                          # leave empty if not using AI features

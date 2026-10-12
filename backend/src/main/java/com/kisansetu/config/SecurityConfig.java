@@ -80,7 +80,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
+
+        // Build allowed origins from the env var (comma-separated) + always include localhost
+        List<String> origins = new java.util.ArrayList<>(Arrays.asList(allowedOrigins.split(",")));
+        // Always allow local development
+        configuration.setAllowedOriginPatterns(origins.isEmpty()
+            ? List.of("http://localhost:*", "http://127.0.0.1:*", "https://*.vercel.app")
+            : origins.stream().map(String::trim).collect(java.util.stream.Collectors.toList()));
+
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
